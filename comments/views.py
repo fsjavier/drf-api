@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions
-from drf_api.permissions import isOwnerReadOnly
+from drf_api.permissions import isOwnerOrReadOnly
 from .models import Comment
 from .serializers import CommentSerializer, CommentDetailSerializer
 
@@ -17,7 +17,7 @@ class CommentList(generics.ListCreateAPIView):
 
 class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [
-        isOwnerReadOnly
+        isOwnerOrReadOnly
     ]
     serializer_class = CommentDetailSerializer
     queryset = Comment.objects.all()
