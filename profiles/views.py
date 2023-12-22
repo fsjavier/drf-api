@@ -20,6 +20,15 @@ class ProfileList(APIView):
         return Response(serializer.data)
 
 
+# class ProfileList(generics.ListAPIView):
+#     """
+#     List all profiles.
+#     No create view as profile creation is handled by django signals.
+#     """
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer
+
+
 class ProfileDetail(APIView):
     serializer_class = ProfileSerializer
     permission_classes = [isOwnerReadOnly]
@@ -48,3 +57,12 @@ class ProfileDetail(APIView):
             serializer.save()
             return Response(serializer.data)
         Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class ProfileDetail(generics.RetrieveUpdateAPIView):
+#     """
+#     Retrieve or update a profile if you're the owner.
+#     """
+#     permission_classes = [IsOwnerOrReadOnly]
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer
