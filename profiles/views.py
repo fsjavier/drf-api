@@ -4,9 +4,10 @@
 # from rest_framework.response import Response
 from django.db.models import Count
 from rest_framework import generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Profile
 from .serializers import ProfileSerializer
-from drf_api.permissions import isOwnerOrReadOnly
+from drf_api.permissions import IsOwnerOrReadOnly
 
 
 # class ProfileList(APIView):
@@ -35,7 +36,11 @@ class ProfileList(generics.ListAPIView):
     ).order_by('-created_at')
     serializer_class = ProfileSerializer
     filter_backends = [
-        filters.OrderingFilter
+        filters.OrderingFilter,
+        DjangoFilterBackend,
+    ]
+    filterset_fields = [
+        'owner__following__followed__profile',
     ]
     ordering_fields = [
         'posts_count',
@@ -48,7 +53,7 @@ class ProfileList(generics.ListAPIView):
 
 # class ProfileDetail(APIView):
 #     serializer_class = ProfileSerializer
-#     permission_classes = [isOwnerOrReadOnly]
+#     permission_classes = [IsOwnerOrReadOnly]
     
 #     def get_object(self, pk):
 #         try:
@@ -80,7 +85,7 @@ class ProfileDetail(generics.RetrieveUpdateAPIView):
     """
     Retrieve or update a profile if you're the owner.
     """
-    permission_classes = [isOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     queryset = Profile.objects.annotate(
         posts_count=Count('owner__post', distinct=True),
         followers_count=Count('owner__followed', distinct=True),
